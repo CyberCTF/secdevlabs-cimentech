@@ -1,0 +1,40 @@
+# yaml-language-server: $schema=https://www.isoloom.com/schema/v1.json
+# Cimentech (secDevLabs, by Globo.com) as an Isoloom spec: a company site on Drupal 7.57, a
+# component with known vulnerabilities, and its PostgreSQL machine (a9db, the host name the
+# site's settings use). Vendored unchanged from the app folder owasp-top10-2021-apps/a6/cimentech
+# of secDevLabs (build/drupal/app/, build/a9db/app/, the rest in app/).
+# `isoloom generate`, then `isoloom run docker`.
+version: 1
+name: secdevlabs-cimentech
+
+networks:
+  lab: { cidr: 10.60.104.0/24, internet: false }
+
+machines:
+  a9db:
+    networks: { lab: 20 }
+    services: [{ port: 5432, name: postgres }]
+    resources: { cpus: 1, memory_mb: 512 }
+    volumes: { data: /var/lib/postgresql/data }
+    docker:
+      build: build/a9db
+
+  drupal:
+    networks: { lab: 10 }
+    services: [{ port: 80, name: web, http: true, publish: 80 }]
+    resources: { cpus: 1, memory_mb: 512 }
+    depends_on: [a9db]
+    docker:
+      build: build/drupal
+
+checks:
+  - name: the site answers
+    http: http://drupal/
+    wait: 180
+  - name: the Cimentech site runs Drupal 7.57
+    script: checks/drupal.sh
+    wait: 60
+
+message: |
+  Cimentech answers at http://localhost:{{ machines.drupal.services.0.publish }}/. Find out
+  what it is built with, and which version.

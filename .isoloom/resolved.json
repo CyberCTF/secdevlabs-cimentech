@@ -1,0 +1,216 @@
+{
+  "generated_by_isoloom": "from isoloom.yml; don't edit: change the spec and run `isoloom generate` (`isoloom check` fails when this file is out of date)",
+  "resolved_version": 1,
+  "name": "secdevlabs-cimentech",
+  "instance": null,
+  "inputs": [],
+  "networks": {
+    "lab": {
+      "cidr": "10.60.104.0/24",
+      "docker_cidr": "10.60.104.0/24",
+      "internet": false,
+      "gateway": null,
+      "gateway_address": "10.60.104.1",
+      "router": null,
+      "controller": "10.60.104.253"
+    }
+  },
+  "reach": [],
+  "machines": {
+    "a9db": {
+      "access": false,
+      "supplied": false,
+      "shapes": [
+        "docker"
+      ],
+      "arch": "amd64",
+      "os": null,
+      "windows": false,
+      "addresses": {
+        "lab": "10.60.104.20"
+      },
+      "docker_addresses": {
+        "lab": "10.60.104.20"
+      },
+      "services": [
+        {
+          "port": 5432,
+          "name": "postgres",
+          "http": false,
+          "publish": null
+        }
+      ],
+      "depends_on": [],
+      "inputs": [],
+      "volumes": {
+        "data": "/var/lib/postgresql/data"
+      },
+      "resources": {
+        "cpus": 1,
+        "memory_mb": 512,
+        "disk_gb": 20
+      },
+      "gateway_of": [],
+      "routes": [],
+      "default_gateway": null,
+      "offline": true
+    },
+    "drupal": {
+      "access": false,
+      "supplied": false,
+      "shapes": [
+        "docker"
+      ],
+      "arch": "amd64",
+      "os": null,
+      "windows": false,
+      "addresses": {
+        "lab": "10.60.104.10"
+      },
+      "docker_addresses": {
+        "lab": "10.60.104.10"
+      },
+      "services": [
+        {
+          "port": 80,
+          "name": "web",
+          "http": true,
+          "publish": 80
+        }
+      ],
+      "depends_on": [
+        "a9db"
+      ],
+      "inputs": [],
+      "volumes": {},
+      "resources": {
+        "cpus": 1,
+        "memory_mb": 512,
+        "disk_gb": 20
+      },
+      "gateway_of": [],
+      "routes": [],
+      "default_gateway": null,
+      "offline": true
+    }
+  },
+  "start_order": [
+    "a9db",
+    "drupal"
+  ],
+  "clones": {},
+  "tools": {},
+  "groups": {},
+  "router": null,
+  "controller": {
+    "addresses": {
+      "lab": "10.60.104.253"
+    }
+  },
+  "published": [
+    {
+      "machine": "drupal",
+      "port": 80,
+      "host_port": 80
+    }
+  ],
+  "targets": {
+    "possible": [
+      "docker",
+      "hosted",
+      "docker-vm",
+      "cloud-docker",
+      "kubernetes"
+    ],
+    "generated": [
+      "docker",
+      "hosted",
+      "docker-vm",
+      "cloud-docker",
+      "kubernetes"
+    ],
+    "refused": {},
+    "not_possible": {
+      "hybrid": "only when some machines are containers and others are VMs",
+      "vagrant": "needs `vm:` on a9db, drupal",
+      "proxmox": "needs `vm:` on a9db, drupal",
+      "cloud-vm": "needs `vm:` on a9db, drupal",
+      "external": "needs `external:` on a9db, drupal"
+    }
+  },
+  "checks": {
+    "default_position": "networks",
+    "positions": [
+      {
+        "position": "networks",
+        "machine": null,
+        "runner": "isoloom-check",
+        "checks": [
+          {
+            "name": "the site answers",
+            "derived": false,
+            "kind": "http",
+            "target": "http://drupal/",
+            "expect": "200",
+            "wait": 180
+          },
+          {
+            "name": "the Cimentech site runs Drupal 7.57",
+            "derived": false,
+            "kind": "script",
+            "target": "checks/drupal.sh",
+            "expect": "",
+            "wait": 60
+          }
+        ]
+      },
+      {
+        "position": "a9db",
+        "machine": "a9db",
+        "runner": "isoloom-check-a9db",
+        "checks": [
+          {
+            "name": "drupal:80 from a9db",
+            "derived": true,
+            "kind": "http",
+            "target": "http://10.60.104.10:80/",
+            "expect": "any",
+            "wait": 30
+          },
+          {
+            "name": "no internet from a9db",
+            "derived": true,
+            "kind": "http",
+            "target": "http://1.1.1.1/",
+            "expect": "blocked",
+            "wait": 0
+          }
+        ]
+      },
+      {
+        "position": "drupal",
+        "machine": "drupal",
+        "runner": "isoloom-check-drupal",
+        "checks": [
+          {
+            "name": "a9db:5432 from drupal",
+            "derived": true,
+            "kind": "tcp",
+            "target": "10.60.104.20:5432",
+            "expect": "open",
+            "wait": 30
+          },
+          {
+            "name": "no internet from drupal",
+            "derived": true,
+            "kind": "http",
+            "target": "http://1.1.1.1/",
+            "expect": "blocked",
+            "wait": 0
+          }
+        ]
+      }
+    ]
+  },
+  "message": "Cimentech answers at http://localhost:80/. Find out\nwhat it is built with, and which version.\n"
+}
