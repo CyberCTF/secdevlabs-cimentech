@@ -135,7 +135,8 @@
       "vagrant": "needs `vm:` on a9db, drupal",
       "proxmox": "needs `vm:` on a9db, drupal",
       "cloud-vm": "needs `vm:` on a9db, drupal",
-      "external": "needs `external:` on a9db, drupal"
+      "external": "needs `external:` on a9db, drupal",
+      "cloud-services": "left out by `targets:`"
     }
   },
   "checks": {
