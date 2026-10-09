@@ -4,11 +4,5 @@
   "question": "Identify the vulnerable component behind the site and exploit it to run a command on the server.",
   "category": "WEB",
   "difficulty": 2,
-  "evidence_kind": "SECRET",
-  "capabilities": [
-    "vulnerable-components",
-    "drupal",
-    "cve-2018-7600",
-    "remote-code-execution"
-  ]
+  "evidence_kind": "SECRET"
 }
