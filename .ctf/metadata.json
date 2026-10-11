@@ -1,7 +1,7 @@
 {
   "title": "secDevLabs Cimentech",
   "description": "A construction company's website running Drupal 7.57 on PostgreSQL. That Drupal release predates the fixes for CVE-2018-7600 (Drupalgeddon 2).",
-  "question": "Identify the vulnerable component behind the site and exploit it to run a command on the server.",
+  "question": "Identify the vulnerable component behind the site, exploit it to run a command on the server and read /ctf/flag.",
   "category": "WEB",
   "difficulty": 2,
   "evidence_kind": "SECRET"

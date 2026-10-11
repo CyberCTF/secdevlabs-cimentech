@@ -1,0 +1,46 @@
+{
+  "objectives": [
+    {
+      "key": "main",
+      "title": "Read the flag",
+      "prompt": "Identify the vulnerable CMS, get code execution and read /ctf/flag.",
+      "check": {
+        "evidence": "SECRET",
+        "format": "FLAG{%s}"
+      },
+      "dev": "FLAG{dev-secdevlabs-cimentech}",
+      "hints": [
+        "Fingerprint the CMS and its exact version.",
+        "Look up CVE-2018-7600 (Drupalgeddon 2)."
+      ],
+      "steps": [
+        {
+          "key": "cms",
+          "title": "Identify the CMS",
+          "prompt": "Which CMS runs the site?",
+          "check": {
+            "answer": [
+              "drupal"
+            ]
+          }
+        },
+        {
+          "key": "version",
+          "title": "Find the version",
+          "prompt": "Which version is it? (x.y)",
+          "check": {
+            "answer_regex": "^\\s*7\\.57\\s*$"
+          }
+        },
+        {
+          "key": "cve",
+          "title": "Name the CVE",
+          "prompt": "Which CVE affects this release? (CVE-YYYY-NNNN)",
+          "check": {
+            "answer_regex": "^\\s*cve-2018-7600\\s*$"
+          }
+        }
+      ]
+    }
+  ]
+}

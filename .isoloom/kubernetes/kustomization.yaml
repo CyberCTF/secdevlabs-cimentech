@@ -12,3 +12,4 @@ configMapGenerator:
   - name: isoloom-scripts
     files:
       - checks__drupal.sh=../../checks/drupal.sh
+      - ctf__flag.sh=../../ctf/flag.sh
